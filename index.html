@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Resmi Alumni UMMU</title>
+    <title>Portal Resmi Tracer Study & Alumni - UMMU</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- SweetAlert2 -->
@@ -18,190 +18,355 @@
         body { font-family: 'Inter', sans-serif; }
         .modal { transition: opacity 0.25s ease; }
         body.modal-active { overflow: hidden; }
-        .glass-nav { background: rgba(23, 37, 84, 0.95); backdrop-filter: blur(10px); }
+        .glass-nav { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
 
-    <!-- Top Navigation Bar -->
-    <nav class="glass-nav text-white shadow-md sticky top-0 z-40 border-b border-blue-900">
-        <div class="container mx-auto px-6 py-4 flex flex-wrap justify-between items-center max-w-7xl gap-3">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-extrabold text-lg shadow-lg border border-blue-400/30">U</div>
+    <!-- ========================================== -->
+    <!-- TOP NAVIGATION BAR (SWITCH ALUMNI & ADMIN) -->
+    <!-- ========================================== -->
+    <nav class="glass-nav text-white shadow-lg sticky top-0 z-40 border-b border-slate-800">
+        <div class="container mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap justify-between items-center max-w-7xl gap-3">
+            <!-- Brand Logo UMMU -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('alumni')">
+                <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center font-extrabold text-lg shadow-md border border-white/20">
+                    U
+                </div>
                 <div>
-                    <span class="text-lg font-extrabold tracking-wide block leading-none">ALUMNI UMMU</span>
+                    <span class="text-base sm:text-lg font-extrabold tracking-wide block leading-none">ALUMNI UMMU</span>
                     <span class="text-[11px] text-blue-300 font-medium">Universitas Muhammadiyah Maluku Utara</span>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <span class="text-[11px] text-blue-200 hidden md:inline px-3 py-1.5 bg-blue-900/80 rounded-full border border-blue-700 font-semibold">
-                    <i class="fas fa-database mr-1 text-emerald-400"></i> Direktori Terpadu PDDikti
-                </span>
-                <!-- Tombol Akses Input Publik -->
-                <button onclick="openPublicFormModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
-                    <i class="fas fa-user-edit"></i>
-                    <span>Input Data Alumni (Publik)</span>
+
+            <!-- Navigasi Mode Tampilan -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="bg-slate-800/90 p-1 rounded-xl border border-slate-700 flex items-center">
+                    <button id="tabBtnAlumni" onclick="switchView('alumni')" class="px-3.5 py-2 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 bg-blue-600 text-white shadow">
+                        <i class="fas fa-user-graduate"></i> <span>Portal Alumni</span>
+                    </button>
+                    <button id="tabBtnAdmin" onclick="handleAdminAccess()" class="px-3.5 py-2 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 text-slate-300 hover:text-white">
+                        <i class="fas fa-user-shield"></i> <span>Panel Admin</span>
+                    </button>
+                </div>
+
+                <!-- Tombol Logout Admin (Hanya muncul saat Admin Login) -->
+                <button id="btnAdminLogout" onclick="logoutAdmin()" class="hidden bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5" title="Keluar dari Mode Admin">
+                    <i class="fas fa-sign-out-alt"></i> <span class="hidden sm:inline">Logout</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Konten Utama Direktori -->
-    <main class="container mx-auto px-4 py-8 max-w-7xl">
-        
-        <!-- Banner Informasi -->
-        <div class="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-900 via-blue-950 to-slate-900 text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-start gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-blue-600/30 border border-blue-400/30 flex items-center justify-center text-blue-300 shrink-0 mt-0.5">
-                    <i class="fas fa-graduation-cap text-lg"></i>
-                </div>
-                <div>
-                    <h2 class="text-sm sm:text-base font-extrabold">Portal Tracer Study & Direktori Alumni UMMU</h2>
-                    <p class="text-xs text-blue-200 mt-0.5 leading-relaxed">
-                        Data lulusan tersinkronisasi dengan format Pangkalan Data Pendidikan Tinggi (PDDikti) dari angkatan 2003 hingga 2025. Alumni juga dapat mengisi pembaruan status karir secara mandiri.
-                    </p>
+    <!-- ========================================== -->
+    <!-- KONTEN UTAMA                               -->
+    <!-- ========================================== -->
+    <main class="container mx-auto px-4 py-8 max-w-7xl flex-1">
+
+        <!-- ================================================= -->
+        <!-- BAGIAN 1: SISI ALUMNI / PUBLIK                    -->
+        <!-- ================================================= -->
+        <div id="alumniViewSection">
+            <!-- Hero Section Sisi Alumni -->
+            <div class="mb-8 rounded-3xl bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 text-white p-6 sm:p-10 shadow-xl relative overflow-hidden border border-blue-900/50">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Tracer Study & Direktori Resmi Lulusan UMMU
+                        </div>
+                        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                            Selamat Datang di Portal Alumni <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-300">UMMU Ternate</span>
+                        </h1>
+                        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+                            Mari berkontribusi dalam peningkatan mutu akademik dan akreditasi Universitas Muhammadiyah Maluku Utara dengan mengisi atau memperbarui data karir Anda pada formulir Tracer Study di bawah ini.
+                        </p>
+                        <div class="pt-2 flex flex-wrap gap-3">
+                            <a href="#formInputAlumniCard" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-extrabold px-5 py-3.5 rounded-xl shadow-lg shadow-emerald-500/25 transition flex items-center gap-2">
+                                <i class="fas fa-pen-to-square"></i> Isi Formulir Tracer Study Sekarang
+                            </a>
+                            <a href="#direktoriTabelSection" class="bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold px-5 py-3.5 rounded-xl transition flex items-center gap-2">
+                                <i class="fas fa-search"></i> Cari Direktori Alumni
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Kotak Cek Cepat NIM Alumni -->
+                    <div class="lg:col-span-5 bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/15">
+                        <h3 class="text-sm font-extrabold text-white mb-1"><i class="fas fa-id-card text-blue-400 mr-1.5"></i> Cek Status Terdaftar Anda</h3>
+                        <p class="text-[11px] text-slate-300 mb-4">Masukkan NIM Anda untuk memeriksa apakah data Anda sudah tercatat di sistem alumni UMMU.</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="quickCheckNim" placeholder="Ketik NIM Anda..." class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-3 text-xs text-white font-bold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <button onclick="checkMyNim()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl text-xs font-extrabold shrink-0 transition shadow">
+                                Cek NIM
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="shrink-0 w-full md:w-auto">
-                <button onclick="downloadSampleTemplate()" class="w-full md:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/15 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
-                    <i class="fas fa-download"></i> Template Excel PDDikti
-                </button>
+
+            <!-- Formulir Input Mandiri Khusus Sisi Alumni (Embedded di Halaman) -->
+            <div id="formInputAlumniCard" class="bg-white rounded-3xl shadow-md border border-slate-200 overflow-hidden mb-10">
+                <div class="bg-gradient-to-r from-emerald-700 to-teal-700 px-6 py-5 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center text-lg">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-extrabold">Formulir Pengisian Data & Karir Alumni (Mandiri)</h2>
+                            <p class="text-[11px] text-emerald-100">Diisi langsung oleh lulusan / alumni UMMU. Data otomatis tersimpan ke dalam direktori.</p>
+                        </div>
+                    </div>
+                    <span class="text-[11px] bg-white/20 px-3 py-1 rounded-full font-bold self-start sm:self-center">Akses Publik Alumni</span>
+                </div>
+
+                <form id="publicAlumniForm" class="p-6 sm:p-8 space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Nomor Induk Mahasiswa (NIM) *</label>
+                            <input type="text" id="pub_nim" required placeholder="Contoh: 121055510121001" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Nama Lengkap (Sesuai Ijazah) *</label>
+                            <input type="text" id="pub_name" required placeholder="Nama Lengkap Anda" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Tanggal Lahir *</label>
+                            <input type="date" id="pub_birth" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Fakultas *</label>
+                            <select id="pub_faculty" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                                <option value="">-- Pilih Fakultas --</option>
+                                <option value="Teknik">Fakultas Teknik</option>
+                                <option value="Ekonomi">Fakultas Ekonomi</option>
+                                <option value="Ilmu Kesehatan">Fakultas Ilmu Kesehatan</option>
+                                <option value="ISIP">Fakultas ISIP</option>
+                                <option value="FKIP">Fakultas KIP</option>
+                                <option value="Pertanian">Fakultas Pertanian</option>
+                                <option value="Agama Islam">Fakultas Agama Islam</option>
+                                <option value="Hukum">Fakultas Hukum</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Program Studi *</label>
+                            <input type="text" id="pub_department" required placeholder="Contoh: Teknik Sipil / Akuntansi" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Tahun Lulus *</label>
+                            <input type="number" id="pub_year" min="1995" max="2030" required placeholder="Contoh: 2024" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">IPK Terakhir *</label>
+                            <input type="text" id="pub_gpa" required placeholder="Contoh: 3.75" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Email Aktif *</label>
+                            <input type="email" id="pub_email" required placeholder="nama@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">No. Telepon / WhatsApp *</label>
+                            <input type="text" id="pub_phone" required placeholder="0812xxxxxxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Status Karir Saat Ini *</label>
+                            <select id="pub_status" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                                <option value="Bekerja">Bekerja</option>
+                                <option value="Wirausaha">Wirausaha</option>
+                                <option value="Studi Lanjut">Studi Lanjut</option>
+                                <option value="Belum Bekerja">Belum Bekerja</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Nama Instansi / Perusahaan / Tempat Usaha / Kampus Studi Lanjut</label>
+                            <input type="text" id="pub_company" placeholder="Contoh: PT Telkom Indonesia / Bank Syariah Indonesia / Usaha Mandiri" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p class="text-[11px] text-slate-500"><i class="fas fa-lock text-emerald-600 mr-1"></i> Nomor telepon & tanggal lahir Anda dijaga kerahasiaannya dan hanya dapat dilihat oleh pengelola resmi kampus.</p>
+                        <div class="flex gap-3 w-full sm:w-auto justify-end">
+                            <button type="reset" class="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Bersihkan Form</button>
+                            <button type="submit" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-lg shadow-emerald-600/25 transition flex items-center gap-2">
+                                <i class="fas fa-paper-plane"></i> Kirim Data Alumni
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <!-- Hero Banner / Statistik Section -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-2 sm:space-y-0 sm:space-x-4">
-                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-users"></i></div>
-                <div>
-                    <div class="text-2xl font-extrabold text-slate-800" id="statTotal">0</div>
-                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">Total Alumni</div>
+        <!-- ================================================= -->
+        <!-- BAGIAN 2: SISI ADMINISTRATOR (PANEL KELOLA)       -->
+        <!-- ================================================= -->
+        <div id="adminViewSection" class="hidden">
+            <!-- Header Banner Admin -->
+            <div class="mb-6 p-5 rounded-2xl bg-slate-900 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-l-4 border-blue-500">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shrink-0">
+                        <i class="fas fa-user-shield text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-base sm:text-lg font-extrabold">Panel Administrator Tracer Study UMMU</h2>
+                            <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">Mode Admin Aktif</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Kelola seluruh data alumni, sinkronisasi PDDikti lintas angkatan, impor/ekspor Excel, serta verifikasi data yang diinput oleh alumni.
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-2 sm:space-y-0 sm:space-x-4">
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-briefcase"></i></div>
-                <div>
-                    <div class="text-2xl font-extrabold text-slate-800" id="statBekerja">0</div>
-                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">Bekerja/Wirausaha</div>
-                </div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-2 sm:space-y-0 sm:space-x-4">
-                <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-user-graduate"></i></div>
-                <div>
-                    <div class="text-2xl font-extrabold text-slate-800" id="statStudi">0</div>
-                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">Studi Lanjut</div>
-                </div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-2 sm:space-y-0 sm:space-x-4">
-                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-award"></i></div>
-                <div>
-                    <div class="text-2xl font-extrabold text-slate-800" id="statAvgGpa">0.00</div>
-                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">Rata-rata IPK</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Action Panel -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 flex flex-wrap gap-3 justify-between items-center border border-slate-200">
-            <div class="flex flex-wrap gap-2 w-full lg:w-auto">
-                <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5 justify-center">
-                    <i class="fas fa-user-plus"></i> Tambah Alumni
-                </button>
-                <button onclick="syncAllAngkatanPDDikti()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5 justify-center">
-                    <i class="fas fa-sync"></i> Tarik Data PDDikti (2003-2025)
-                </button>
-                <button onclick="syncNonInformatikaPDDikti()" class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5 justify-center" title="Tarik data prodi selain Informatika 2003-2025">
-                    <i class="fas fa-filter"></i> Tarik Non-Informatika
-                </button>
-                <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md cursor-pointer transition flex items-center gap-1.5 justify-center">
-                    <i class="fas fa-file-import"></i> Import Excel
-                    <input type="file" id="importExcel" class="hidden" accept=".xlsx, .xls, .csv">
-                </label>
-            </div>
-            
-            <div class="flex flex-wrap gap-2 w-full lg:w-auto justify-end">
-                <button onclick="clearData()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                    <i class="fas fa-trash-alt"></i> Reset Tabel
-                </button>
-                <button onclick="exportToExcel()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
-                    <i class="fas fa-file-excel"></i> Export Excel
-                </button>
-            </div>
-        </div>
-
-        <!-- Filter Panel -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border border-slate-200 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div>
-                    <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Program Studi / Fakultas</label>
-                    <select id="filterProdi" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onchange="renderTable()">
-                        <option value="all">Semua Program Studi</option>
-                        <option value="Informatika">Informatika</option>
-                        <option value="Teknik Sipil">Teknik Sipil</option>
-                        <option value="Akuntansi">Akuntansi</option>
-                        <option value="Manajemen">Manajemen</option>
-                        <option value="Kesehatan Masyarakat">Kesehatan Masyarakat</option>
-                        <option value="Ilmu Pemerintahan">Ilmu Pemerintahan</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Status Karir</label>
-                    <select id="filterStatus" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onchange="renderTable()">
-                        <option value="all">Semua Status</option>
-                        <option value="Bekerja">Bekerja</option>
-                        <option value="Wirausaha">Wirausaha</option>
-                        <option value="Studi Lanjut">Studi Lanjut</option>
-                        <option value="Belum Bekerja">Belum Bekerja</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Tahun Lulus / Angkatan</label>
-                    <input type="text" id="filterYear" placeholder="Contoh: 2024" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onkeyup="renderTable()">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Pencarian Cepat</label>
-                    <input type="text" id="searchInput" placeholder="Cari nama, NIM, instansi..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onkeyup="renderTable()">
-                </div>
-                <div class="flex items-end">
-                    <button onclick="resetFilters()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-1.5">
-                        <i class="fas fa-sync-alt"></i> Reset Filter
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button onclick="downloadSampleTemplate()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                        <i class="fas fa-download text-blue-400"></i> Template Excel PDDikti
                     </button>
                 </div>
             </div>
 
-            <!-- Opsi Pengecualian Informatika 2003-2025 -->
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
-                <label class="inline-flex items-center cursor-pointer space-x-2.5">
-                    <input type="checkbox" id="excludeInformatikaToggle" onchange="renderTable()" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
-                    <span class="text-xs font-bold text-slate-700">Jangan tampilkan data Alumni Informatika dari angkatan 2003 s/d 2025</span>
-                </label>
-                <span class="text-[11px] text-slate-400 font-medium">Centang opsi di samping jika ingin mengecualikan prodi Informatika (2003–2025) dari tabel & ekspor.</span>
+            <!-- Action Panel Khusus Admin -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 flex flex-wrap gap-3 justify-between items-center border border-slate-200">
+                <div class="flex flex-wrap gap-2 w-full lg:w-auto">
+                    <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5">
+                        <i class="fas fa-user-plus"></i> Tambah Alumni (Admin)
+                    </button>
+                    <button onclick="syncAllAngkatanPDDikti()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5">
+                        <i class="fas fa-sync"></i> Tarik Data PDDikti (2003-2025)
+                    </button>
+                    <button onclick="syncNonInformatikaPDDikti()" class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5">
+                        <i class="fas fa-filter"></i> Tarik Non-Informatika
+                    </button>
+                    <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md cursor-pointer transition flex items-center gap-1.5">
+                        <i class="fas fa-file-import"></i> Import Excel PDDikti
+                        <input type="file" id="importExcel" class="hidden" accept=".xlsx, .xls, .csv">
+                    </label>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 w-full lg:w-auto justify-end">
+                    <button onclick="clearData()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fas fa-trash-alt"></i> Reset Semua Data
+                    </button>
+                    <button onclick="exportToExcel()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Directory Table Data -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200">
-                    <thead class="bg-slate-900 text-white text-[10px] uppercase tracking-wider font-extrabold">
-                        <tr>
-                            <th class="px-5 py-4 text-left">NIM</th>
-                            <th class="px-5 py-4 text-left">Nama Lengkap & Kontak</th>
-                            <th class="px-5 py-4 text-left">Fakultas / Program Studi</th>
-                            <th class="px-5 py-4 text-center">Thn Lulus</th>
-                            <th class="px-5 py-4 text-center">IPK</th>
-                            <th class="px-5 py-4 text-left">Status & Instansi</th>
-                            <th class="px-5 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="alumniTableBody" class="bg-white divide-y divide-slate-100 text-xs">
-                        <!-- Data terisi secara dinamis oleh JavaScript -->
-                    </tbody>
-                </table>
+        <!-- ================================================= -->
+        <!-- BAGIAN BERSAMA: STATISTIK & TABEL DIREKTORI       -->
+        <!-- ================================================= -->
+        <div id="direktoriTabelSection">
+            <!-- Kartu Statistik Ringkas -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-users"></i></div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-slate-800" id="statTotal">0</div>
+                        <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Total Alumni</div>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-briefcase"></i></div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-slate-800" id="statBekerja">0</div>
+                        <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Bekerja / Usaha</div>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-user-graduate"></i></div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-slate-800" id="statStudi">0</div>
+                        <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Studi Lanjut</div>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-award"></i></div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-slate-800" id="statAvgGpa">0.00</div>
+                        <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Rata-rata IPK</div>
+                    </div>
+                </div>
             </div>
-            <div class="p-4 border-t border-slate-100 bg-slate-50 text-[11px] text-slate-600 flex justify-between font-bold">
-                <span>Data Terfilter: <strong id="totalFiltered" class="text-slate-900 text-xs">0</strong></span>
-                <span>Total Tersimpan: <strong id="totalAll" class="text-slate-900 text-xs">0</strong></span>
+
+            <!-- Filter Pencarian Direktori -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border border-slate-200 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-extrabold text-slate-800"><i class="fas fa-list-ul text-blue-600 mr-1.5"></i> Direktori Lulusan & Sebaran Karir Alumni</h3>
+                    <span id="viewRoleBadge" class="text-[11px] font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">Mode Tampilan: Publik / Alumni</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Program Studi</label>
+                        <select id="filterProdi" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onchange="renderTable()">
+                            <option value="all">Semua Program Studi</option>
+                            <option value="Teknik Sipil">Teknik Sipil</option>
+                            <option value="Akuntansi">Akuntansi</option>
+                            <option value="Manajemen">Manajemen</option>
+                            <option value="Kesehatan Masyarakat">Kesehatan Masyarakat</option>
+                            <option value="Ilmu Pemerintahan">Ilmu Pemerintahan</option>
+                            <option value="Informatika">Informatika</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Status Karir</label>
+                        <select id="filterStatus" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onchange="renderTable()">
+                            <option value="all">Semua Status</option>
+                            <option value="Bekerja">Bekerja</option>
+                            <option value="Wirausaha">Wirausaha</option>
+                            <option value="Studi Lanjut">Studi Lanjut</option>
+                            <option value="Belum Bekerja">Belum Bekerja</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Tahun Lulus</label>
+                        <input type="text" id="filterYear" placeholder="Contoh: 2024" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onkeyup="renderTable()">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Cari Nama / NIM / Instansi</label>
+                        <input type="text" id="searchInput" placeholder="Ketik kata kunci..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onkeyup="renderTable()">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="resetFilters()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-1.5">
+                            <i class="fas fa-sync-alt"></i> Reset Filter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Opsi Filter Pengecualian Informatika 2003-2025 -->
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+                    <label class="inline-flex items-center cursor-pointer space-x-2.5">
+                        <input type="checkbox" id="excludeInformatikaToggle" checked onchange="renderTable()" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        <span class="text-xs font-bold text-slate-700">Sembunyikan data Alumni Informatika angkatan 2003 s/d 2025</span>
+                    </label>
+                    <span class="text-[11px] text-slate-400 font-medium">Hilangkan centang jika ingin memunculkan kembali alumni prodi Informatika (2003–2025).</span>
+                </div>
+            </div>
+
+            <!-- Tabel Direktori -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-900 text-white text-[10px] uppercase tracking-wider font-extrabold">
+                            <tr>
+                                <th class="px-5 py-4 text-left">NIM</th>
+                                <th class="px-5 py-4 text-left">Nama Alumni</th>
+                                <th class="px-5 py-4 text-left">Fakultas / Program Studi</th>
+                                <th class="px-5 py-4 text-center">Thn Lulus</th>
+                                <th class="px-5 py-4 text-center">IPK</th>
+                                <th class="px-5 py-4 text-left">Status & Instansi Karir</th>
+                                <th id="thAdminAction" class="px-5 py-4 text-center hidden">Aksi Admin</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alumniTableBody" class="bg-white divide-y divide-slate-100 text-xs">
+                            <!-- Diisi otomatis oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 border-t border-slate-100 bg-slate-50 text-[11px] text-slate-600 flex justify-between font-bold">
+                    <span>Data Terfilter: <strong id="totalFiltered" class="text-slate-900 text-xs">0</strong></span>
+                    <span>Total Tersimpan di Sistem: <strong id="totalAll" class="text-slate-900 text-xs">0</strong></span>
+                </div>
             </div>
         </div>
     </main>
@@ -213,18 +378,58 @@
                 <div class="w-7 h-7 bg-blue-600 text-white rounded-lg flex items-center justify-center font-extrabold">U</div>
                 <span>&copy; 2026 Universitas Muhammadiyah Maluku Utara (UMMU).</span>
             </div>
-            <p>Sistem Informasi Tracer Study & Direktori Alumni Terpadu.</p>
+            <p>Portal Terpadu Tracer Study Alumni (Mode Dual: Publik Alumni & Administrator).</p>
         </div>
     </footer>
 
-    <!-- MODAL FORM INPUT ALUMNI (ADMIN, PUBLIK, EDIT & DUPLIKAT) -->
+    <!-- ================================================= -->
+    <!-- MODAL LOGIN ADMINISTRATOR                         -->
+    <!-- ================================================= -->
+    <div id="loginAdminModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 p-4">
+        <div class="modal-overlay absolute w-full h-full bg-slate-900/60 backdrop-blur-sm" onclick="toggleModal('loginAdminModal')"></div>
+        <div class="modal-container bg-white w-full max-w-md mx-auto rounded-3xl shadow-2xl z-50 overflow-hidden">
+            <div class="bg-slate-900 p-6 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-lg"><i class="fas fa-user-shield"></i></div>
+                    <div>
+                        <h3 class="text-base font-extrabold">Login Administrator</h3>
+                        <p class="text-[11px] text-slate-400">Masuk untuk mengelola penuh database alumni</p>
+                    </div>
+                </div>
+                <button onclick="toggleModal('loginAdminModal')" class="text-slate-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+            </div>
+            <form id="adminLoginForm" class="p-6 space-y-4">
+                <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-800 font-semibold">
+                    <i class="fas fa-info-circle mr-1"></i> Akun Demo Admin: Username <strong>admin</strong> | Password <strong>admin123</strong>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-600 mb-1">Username Admin</label>
+                    <input type="text" id="adminUsername" required placeholder="admin" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-600 mb-1">Password</label>
+                    <input type="password" id="adminPassword" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="toggleModal('loginAdminModal')" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">Batal</button>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-lg transition">
+                        <i class="fas fa-sign-in-alt mr-1"></i> Masuk Panel Admin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================================================= -->
+    <!-- MODAL FORM ADMIN (TAMBAH, EDIT, DUPLIKAT)         -->
+    <!-- ================================================= -->
     <div id="addModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 p-4">
         <div class="modal-overlay absolute w-full h-full bg-slate-900/60 backdrop-blur-sm" onclick="toggleModal('addModal')"></div>
         <div class="modal-container bg-white w-full md:max-w-2xl mx-auto rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col max-h-full">
             <div class="bg-slate-900 p-5 flex justify-between items-center text-white shrink-0">
                 <div>
-                    <p id="modalTitle" class="text-lg font-extrabold tracking-tight">Formulir Input Tracer Study Alumni</p>
-                    <p id="modalSubtitle" class="text-[11px] text-blue-300 font-medium">Lengkapi data kelulusan dan status karir alumni UMMU</p>
+                    <p id="modalTitle" class="text-lg font-extrabold tracking-tight">Kelola Data Alumni</p>
+                    <p id="modalSubtitle" class="text-[11px] text-blue-300 font-medium">Formulir pengelolaan data lulusan UMMU</p>
                 </div>
                 <div class="modal-close cursor-pointer text-slate-400 hover:text-white transition" onclick="toggleModal('addModal')">
                     <i class="fas fa-times text-xl"></i>
@@ -238,7 +443,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">NIM *</label>
-                            <input type="text" id="identityNumber" required placeholder="Contoh: 121055520121001" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition">
+                            <input type="text" id="identityNumber" required placeholder="Contoh: 121055510121001" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition">
                         </div>
                         <div>
                             <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Nama Lengkap *</label>
@@ -258,7 +463,7 @@
                         </div>
                         <div>
                             <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Program Studi *</label>
-                            <input type="text" id="department" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition" placeholder="Contoh: Teknik Sipil / Informatika">
+                            <input type="text" id="department" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition" placeholder="Contoh: Teknik Sipil / Akuntansi">
                         </div>
                         <div>
                             <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">IPK Terakhir *</label>
@@ -289,7 +494,7 @@
                     <div class="flex justify-end pt-5 mt-6 border-t border-slate-100 gap-3">
                         <button type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-3 rounded-xl font-bold text-xs transition" onclick="toggleModal('addModal')">Batal</button>
                         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-md transition flex items-center gap-2">
-                            <i class="fas fa-paper-plane"></i> <span>Simpan Data Alumni</span>
+                            <i class="fas fa-save"></i> <span>Simpan Perubahan</span>
                         </button>
                     </div>
                 </form>
@@ -297,13 +502,19 @@
         </div>
     </div>
 
-    <!-- SCRIPT UTAMA -->
+    <!-- ================================================= -->
+    <!-- LOGIKA JAVASCRIPT UTAMA (DUAL VIEW: ALUMNI & ADMIN)-->
+    <!-- ================================================= -->
     <script>
-        const STORAGE_KEY = 'ummu_alumni_portal_v2';
+        const STORAGE_KEY = 'ummu_alumni_portal_v3';
+        const ADMIN_SESSION_KEY = 'ummu_alumni_admin_logged_in';
+
         let allAlumni = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         let filteredAlumni = [];
+        let isAdminLoggedIn = sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+        let currentViewMode = 'alumni'; // 'alumni' atau 'admin'
 
-        // Data Awal Default (Jika localStorage masih kosong saat pertama kali dibuka)
+        // Data Awal Default (Non-Informatika 2003-2025)
         const defaultInitialData = [
             { identity_number: "121055510121001", name: "AHMAD FAUZI", birth_date: "2001-04-12", graduation_year: "2024", faculty: "Teknik", department: "Teknik Sipil", gpa: "3.65", email: "ahmadfauzi@gmail.com", phone: "081244556677", employment_status: "Bekerja", company_name: "PT Wijaya Karya" },
             { identity_number: "121055530121005", name: "SITI RAHMAWATI", birth_date: "2002-08-21", graduation_year: "2024", faculty: "Ekonomi", department: "Akuntansi", gpa: "3.82", email: "sitirahma@gmail.com", phone: "082133445566", employment_status: "Bekerja", company_name: "Bank Syariah Indonesia" },
@@ -317,10 +528,194 @@
                 allAlumni = [...defaultInitialData];
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(allAlumni));
             }
+            if (isAdminLoggedIn) {
+                document.getElementById('btnAdminLogout').classList.remove('hidden');
+            }
             loadData();
         }
 
-        // Cek apakah data adalah Alumni Informatika tahun 2003 - 2025
+        // Fungsi Berpindah Antara Sisi Alumni & Sisi Admin
+        function switchView(mode) {
+            if (mode === 'admin' && !isAdminLoggedIn) {
+                toggleModal('loginAdminModal');
+                return;
+            }
+
+            currentViewMode = mode;
+            const alumniSec = document.getElementById('alumniViewSection');
+            const adminSec = document.getElementById('adminViewSection');
+            const tabAlumni = document.getElementById('tabBtnAlumni');
+            const tabAdmin = document.getElementById('tabBtnAdmin');
+            const thAction = document.getElementById('thAdminAction');
+            const roleBadge = document.getElementById('viewRoleBadge');
+
+            if (mode === 'admin') {
+                alumniSec.classList.add('hidden');
+                adminSec.classList.remove('hidden');
+                thAction.classList.remove('hidden');
+
+                tabAdmin.className = "px-3.5 py-2 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 bg-blue-600 text-white shadow";
+                tabAlumni.className = "px-3.5 py-2 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 text-slate-300 hover:text-white";
+                roleBadge.className = "text-[11px] font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200";
+                roleBadge.innerHTML = '<i class="fas fa-user-shield mr-1"></i> Mode Tampilan: Administrator Penuh';
+            } else {
+                adminSec.classList.add('hidden');
+                alumniSec.classList.remove('hidden');
+                thAction.classList.add('hidden');
+
+                tabAlumni.className = "px-3.5 py-2 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 bg-blue-600 text-white shadow";
+                tabAdmin.className = "px-3.5 py-2 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 text-slate-300 hover:text-white";
+                roleBadge.className = "text-[11px] font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200";
+                roleBadge.innerHTML = '<i class="fas fa-globe mr-1"></i> Mode Tampilan: Publik / Alumni';
+            }
+
+            renderTable();
+        }
+
+        function handleAdminAccess() {
+            if (isAdminLoggedIn) {
+                switchView('admin');
+            } else {
+                toggleModal('loginAdminModal');
+            }
+        }
+
+        // Proses Login Admin
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('adminUsername').value.trim();
+            const pass = document.getElementById('adminPassword').value;
+
+            if (user === 'admin' && pass === 'admin123') {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+                document.getElementById('btnAdminLogout').classList.remove('hidden');
+                toggleModal('loginAdminModal');
+                this.reset();
+                switchView('admin');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Admin Berhasil',
+                    text: 'Selamat datang di Panel Administrator Tracer Study UMMU.',
+                    timer: 1800,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire('Akses Ditolak', 'Username atau Password Admin salah!', 'error');
+            }
+        });
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem(ADMIN_SESSION_KEY);
+            document.getElementById('btnAdminLogout').classList.add('hidden');
+            switchView('alumni');
+            Swal.fire('Berhasil Keluar', 'Anda telah kembali ke halaman publik Alumni.', 'info');
+        }
+
+        // Cek Cepat NIM dari Sisi Alumni
+        function checkMyNim() {
+            const nim = document.getElementById('quickCheckNim').value.trim();
+            if (!nim) {
+                Swal.fire(' Masukkan NIM', 'Silakan ketik Nomor Induk Mahasiswa (NIM) Anda terlebih dahulu.', 'warning');
+                return;
+            }
+            const found = allAlumni.find(a => a.identity_number === nim);
+            if (found) {
+                Swal.fire({
+                    title: 'Data Anda Terdaftar!',
+                    html: `
+                        <div class="text-left text-xs space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200 mt-2">
+                            <div><strong>Nama:</strong> ${found.name}</div>
+                            <div><strong>NIM:</strong> ${found.identity_number}</div>
+                            <div><strong>Prodi / Fakultas:</strong> ${found.department} (${found.faculty})</div>
+                            <div><strong>Tahun Lulus:</strong> ${found.graduation_year} | <strong>IPK:</strong> ${found.gpa}</div>
+                            <div><strong>Status Karir:</strong> ${found.employment_status} (${found.company_name || '-'})</div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-3">Ingin memperbarui status pekerjaan/karir Anda saat ini?</p>
+                    `,
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Perbarui Karir Saya',
+                    cancelButtonText: 'Tutup',
+                    confirmButtonColor: '#059669'
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        // Isi otomatis ke form publik alumni
+                        document.getElementById('pub_nim').value = found.identity_number;
+                        document.getElementById('pub_name').value = found.name;
+                        document.getElementById('pub_birth').value = found.birth_date;
+                        document.getElementById('pub_faculty').value = found.faculty;
+                        document.getElementById('pub_department').value = found.department;
+                        document.getElementById('pub_year').value = found.graduation_year;
+                        document.getElementById('pub_gpa').value = found.gpa;
+                        document.getElementById('pub_email').value = found.email;
+                        document.getElementById('pub_phone').value = found.phone || '';
+                        document.getElementById('pub_status').value = found.employment_status;
+                        document.getElementById('pub_company').value = found.company_name || '';
+                        document.getElementById('formInputAlumniCard').scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'NIM Belum Terdaftar',
+                    text: `NIM ${nim} belum tercatat di direktori. Silakan lengkapi Formulir Tracer Study di bawah ini.`,
+                    icon: 'info',
+                    confirmButtonText: 'Isi Formulir Sekarang',
+                    confirmButtonColor: '#2563eb'
+                }).then(() => {
+                    document.getElementById('pub_nim').value = nim;
+                    document.getElementById('formInputAlumniCard').scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('pub_name').focus();
+                });
+            }
+        }
+
+        // Submit Form Mandiri dari Sisi Alumni
+        document.getElementById('publicAlumniForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nim = document.getElementById('pub_nim').value.trim();
+            const newEntry = {
+                identity_number: nim,
+                name: document.getElementById('pub_name').value.toUpperCase(),
+                birth_date: document.getElementById('pub_birth').value,
+                faculty: document.getElementById('pub_faculty').value,
+                department: document.getElementById('pub_department').value,
+                graduation_year: String(document.getElementById('pub_year').value),
+                gpa: document.getElementById('pub_gpa').value,
+                email: document.getElementById('pub_email').value,
+                phone: document.getElementById('pub_phone').value,
+                employment_status: document.getElementById('pub_status').value,
+                company_name: document.getElementById('pub_company').value || '-'
+            };
+
+            const existingIdx = allAlumni.findIndex(a => a.identity_number === nim);
+            if (existingIdx !== -1) {
+                Swal.fire({
+                    title: 'NIM Sudah Ada di Sistem',
+                    text: `Apakah Anda ingin memperbarui data karir untuk NIM ${nim} (${allAlumni[existingIdx].name})?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Perbarui Data Saya',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#059669'
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        allAlumni[existingIdx] = newEntry;
+                        saveToStorage();
+                        this.reset();
+                        Swal.fire('Berhasil Diperbarui!', 'Terima kasih, pembaruan data Tracer Study Anda telah tersimpan.', 'success');
+                    }
+                });
+            } else {
+                allAlumni.push(newEntry);
+                saveToStorage();
+                this.reset();
+                Swal.fire('Terima Kasih!', 'Data Anda telah berhasil ditambahkan ke dalam Direktori Alumni UMMU.', 'success');
+            }
+        });
+
+        // Cek Pengecualian Alumni Informatika 2003 - 2025
         function isExcludedInformatika(department, year) {
             const prod = String(department || '').toLowerCase().trim();
             const yr = parseInt(year, 10);
@@ -355,119 +750,6 @@
             loadData();
         }
 
-        // Tarik Data PDDikti Lintas Angkatan (2003 s/d 2025)
-        function syncAllAngkatanPDDikti() {
-            Swal.fire({
-                title: 'Menarik Data PDDikti (2003 - 2025)...',
-                text: 'Menyinkronkan data lulusan UMMU lintas angkatan 2003 hingga 2025.',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); }
-            });
-
-            setTimeout(() => {
-                const prodiList = [
-                    { fac: "Teknik", dep: "Informatika", code: "55201" },
-                    { fac: "Teknik", dep: "Teknik Sipil", code: "22201" },
-                    { fac: "Ekonomi", dep: "Akuntansi", code: "62201" },
-                    { fac: "Ekonomi", dep: "Manajemen", code: "61201" },
-                    { fac: "Ilmu Kesehatan", dep: "Kesehatan Masyarakat", code: "13201" },
-                    { fac: "ISIP", dep: "Ilmu Pemerintahan", code: "65201" }
-                ];
-                const statuses = ["Bekerja", "Wirausaha", "Studi Lanjut", "Bekerja"];
-                const companies = ["PT Telkom Indonesia", "Bank Mandiri", "Dinas Kominfo Malut", "Wirausaha Mandiri", "Universitas Gadjah Mada", "PT Aneka Tambang", "Biro BITD UMMU", "Pemkot Ternate"];
-                const names = ["FADLI RAHMAN", "NURLAILA HI. HUSEN", "M. AKBAR SYAH", "SITTI AISYAH", "RIDWAN MARASABESSY", "DEWI SARTIKA", "IRFAN DJAFAR", "FITRIA NINGSIH", "RUSLAN ABDULLAH", " RANI SOLEMAN"];
-
-                let added = 0;
-                for (let year = 2003; year <= 2025; year++) {
-                    const p = prodiList[year % prodiList.length];
-                    const namePick = names[year % names.length];
-                    const nim = `1210${p.code}${String(year).slice(-2)}0${(year % 9) + 1}`;
-                    
-                    const newRow = {
-                        identity_number: nim,
-                        name: `${namePick} (${year})`,
-                        birth_date: `${year - 22}-06-15`,
-                        graduation_year: String(year),
-                        faculty: p.fac,
-                        department: p.dep,
-                        gpa: (3.25 + ((year % 6) * 0.1)).toFixed(2),
-                        email: `alumni.${nim}@ummu.ac.id`,
-                        phone: `08124000${year}`,
-                        employment_status: statuses[year % statuses.length],
-                        company_name: companies[year % companies.length]
-                    };
-
-                    if (!allAlumni.some(a => a.identity_number === newRow.identity_number)) {
-                        allAlumni.push(newRow);
-                        added++;
-                    }
-                }
-
-                saveToStorage();
-                Swal.fire('Sinkronisasi Selesai!', `${added} data alumni lintas angkatan (2003–2025) berhasil ditambahkan.`, 'success');
-            }, 900);
-        }
-
-        // Tarik Data Khusus Non-Informatika (Jika tidak ingin mengambil Informatika 2003-2025)
-        function syncNonInformatikaPDDikti() {
-            Swal.fire({
-                title: 'Menarik Data Non-Informatika...',
-                text: 'Menyaring keluar data Informatika (2003-2025) dan memuat prodi lainnya.',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); }
-            });
-
-            setTimeout(() => {
-                // Hapus data Informatika 2003-2025 yang ada
-                allAlumni = allAlumni.filter(a => !isExcludedInformatika(a.department, a.graduation_year));
-                document.getElementById('excludeInformatikaToggle').checked = true;
-
-                defaultInitialData.forEach(item => {
-                    if (!allAlumni.some(a => a.identity_number === item.identity_number)) {
-                        allAlumni.push(item);
-                    }
-                });
-
-                saveToStorage();
-                Swal.fire('Berhasil!', 'Data Informatika (2003-2025) telah dikecualikan dan data program studi lain telah dimuat.', 'success');
-            }, 800);
-        }
-
-        function deleteAlumni(nim) {
-            Swal.fire({
-                title: 'Hapus Data Alumni?',
-                text: `Data dengan NIM ${nim} akan dihapus dari tabel.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e11d48',
-                cancelButtonColor: '#94a3b8',
-                confirmButtonText: 'Ya, Hapus!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    allAlumni = allAlumni.filter(a => a.identity_number !== nim);
-                    saveToStorage();
-                    Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
-                }
-            });
-        }
-        
-        function clearData() {
-            Swal.fire({
-                title: 'Kosongkan Semua Data?',
-                text: "Seluruh data pada tabel akan direset!",
-                icon: 'error',
-                showCancelButton: true,
-                confirmButtonColor: '#e11d48',
-                confirmButtonText: 'Ya, Kosongkan'
-            }).then((result) => {
-                if(result.isConfirmed) {
-                    allAlumni = [];
-                    saveToStorage();
-                    Swal.fire('Dikosongkan!', 'Tabel telah dikosongkan.', 'success');
-                }
-            });
-        }
-
         function renderTable() {
             const prodiFilter = document.getElementById('filterProdi').value;
             const statusFilter = document.getElementById('filterStatus').value;
@@ -496,27 +778,42 @@
             document.getElementById('totalAll').innerText = allAlumni.length;
             updateStatistics(filteredAlumni);
 
-            if(filteredAlumni.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-semibold text-sm">Tidak ada data alumni yang cocok dengan filter saat ini.</td></tr>`;
+            if (filteredAlumni.length === 0) {
+                const colSpan = currentViewMode === 'admin' ? 7 : 6;
+                tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-10 text-slate-400 font-semibold text-sm">Tidak ada data alumni yang cocok dengan pencarian/filter saat ini.</td></tr>`;
                 return;
             }
 
             filteredAlumni.forEach(item => {
                 let badgeColor = 'bg-slate-50 text-slate-700 border-slate-200';
-                if(item.employment_status === 'Bekerja') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                else if(item.employment_status === 'Wirausaha') badgeColor = 'bg-amber-50 text-amber-700 border-amber-200';
-                else if(item.employment_status === 'Studi Lanjut') badgeColor = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                if (item.employment_status === 'Bekerja') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                else if (item.employment_status === 'Wirausaha') badgeColor = 'bg-amber-50 text-amber-700 border-amber-200';
+                else if (item.employment_status === 'Studi Lanjut') badgeColor = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+
+                // Kontak hanya ditampilkan penuh di sisi Admin demi privasi alumni di sisi Publik
+                const contactInfo = currentViewMode === 'admin' 
+                    ? `<div class="text-[10px] text-slate-500 flex flex-wrap items-center gap-2 mt-0.5">
+                         <span><i class="fas fa-envelope mr-1 text-slate-400"></i>${item.email || '-'}</span>
+                         <span><i class="fas fa-phone mr-1 text-slate-400"></i>${item.phone || '-'}</span>
+                         <span><i class="fas fa-calendar mr-1 text-slate-400"></i>${item.birth_date || '-'}</span>
+                       </div>`
+                    : `<div class="text-[10px] text-slate-400 mt-0.5"><i class="fas fa-check-circle text-emerald-500 mr-1"></i>Alumni Terverifikasi UMMU</div>`;
+
+                const adminActionsCell = currentViewMode === 'admin'
+                    ? `<td class="px-5 py-4 text-center whitespace-nowrap">
+                         <button onclick="editAlumni('${item.identity_number}')" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg mr-1 transition" title="Edit Data"><i class="fas fa-edit"></i></button>
+                         <button onclick="duplicateAlumni('${item.identity_number}')" class="text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg mr-1 transition" title="Duplikat Data"><i class="fas fa-copy"></i></button>
+                         <button onclick="deleteAlumni('${item.identity_number}')" class="text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg transition" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>
+                       </td>`
+                    : '';
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition border-b border-slate-100 last:border-0";
                 tr.innerHTML = `
                     <td class="px-5 py-4 font-mono font-bold text-slate-700 text-xs whitespace-nowrap">${item.identity_number}</td>
                     <td class="px-5 py-4">
-                        <div class="font-extrabold text-slate-900 text-xs mb-0.5">${item.name}</div>
-                        <div class="text-[10px] text-slate-500 flex flex-wrap items-center gap-2">
-                            <span><i class="fas fa-envelope mr-1 text-slate-400"></i>${item.email || '-'}</span>
-                            <span><i class="fas fa-phone mr-1 text-slate-400"></i>${item.phone || '-'}</span>
-                        </div>
+                        <div class="font-extrabold text-slate-900 text-xs">${item.name}</div>
+                        ${contactInfo}
                     </td>
                     <td class="px-5 py-4 text-slate-700">
                         <span class="font-bold block mb-0.5 text-xs">${item.department}</span>
@@ -525,41 +822,87 @@
                     <td class="px-5 py-4 text-center font-extrabold text-slate-700 text-xs">${item.graduation_year}</td>
                     <td class="px-5 py-4 text-center font-extrabold text-blue-600 text-xs">${item.gpa}</td>
                     <td class="px-5 py-4">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${badgeColor} inline-block mb-1 shadow-2xs">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${badgeColor} inline-block mb-1">
                             ${item.employment_status}
                         </span>
-                        <div class="text-[10px] text-slate-500 font-semibold truncate max-w-[160px]" title="${item.company_name || '-'}">
+                        <div class="text-[10px] text-slate-500 font-semibold truncate max-w-[180px]" title="${item.company_name || '-'}">
                             <i class="fas fa-building mr-1"></i>${item.company_name || '-'}
                         </div>
                     </td>
-                    <td class="px-5 py-4 text-center whitespace-nowrap">
-                        <button onclick="editAlumni('${item.identity_number}')" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg mr-1 transition" title="Edit Data"><i class="fas fa-edit"></i></button>
-                        <button onclick="duplicateAlumni('${item.identity_number}')" class="text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg mr-1 transition" title="Duplikat Data"><i class="fas fa-copy"></i></button>
-                        <button onclick="deleteAlumni('${item.identity_number}')" class="text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg transition" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>
-                    </td>
+                    ${adminActionsCell}
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function openAddModal() {
-            document.getElementById('alumniForm').reset();
-            document.getElementById('modalTitle').innerText = 'Tambah Data Alumni';
-            document.getElementById('modalSubtitle').innerText = 'Input data alumni baru ke dalam sistem direktori UMMU';
-            document.getElementById('isEditMode').value = 'false';
-            
-            const idInput = document.getElementById('identityNumber');
-            idInput.readOnly = false;
-            idInput.classList.remove('bg-slate-100', 'cursor-not-allowed', 'text-slate-500');
-            idInput.classList.add('bg-slate-50');
-            
-            toggleModal('addModal');
+        // Fungsi-fungsi Admin (Sinkronisasi PDDikti, CRUD Modal, Import/Export)
+        function syncAllAngkatanPDDikti() {
+            Swal.fire({
+                title: 'Menarik Data PDDikti (2003 - 2025)...',
+                text: 'Menyinkronkan data lulusan UMMU lintas angkatan 2003 hingga 2025.',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            setTimeout(() => {
+                const prodiList = [
+                    { fac: "Teknik", dep: "Teknik Sipil", code: "22201" },
+                    { fac: "Ekonomi", dep: "Akuntansi", code: "62201" },
+                    { fac: "Ekonomi", dep: "Manajemen", code: "61201" },
+                    { fac: "Ilmu Kesehatan", dep: "Kesehatan Masyarakat", code: "13201" },
+                    { fac: "ISIP", dep: "Ilmu Pemerintahan", code: "65201" }
+                ];
+                const statuses = ["Bekerja", "Wirausaha", "Studi Lanjut", "Bekerja"];
+                const companies = ["PT Telkom Indonesia", "Bank Mandiri", "Dinas PUPR Malut", "Wirausaha Mandiri", "Universitas Gadjah Mada", "PT Aneka Tambang", "Biro BITD UMMU", "Pemkot Ternate"];
+                const names = ["FADLI RAHMAN", "NURLAILA HI. HUSEN", "M. AKBAR SYAH", "SITTI AISYAH", "RIDWAN MARASABESSY", "DEWI SARTIKA", "IRFAN DJAFAR", "FITRIA NINGSIH", "RUSLAN ABDULLAH", "RANI SOLEMAN"];
+
+                let added = 0;
+                for (let year = 2003; year <= 2025; year++) {
+                    const p = prodiList[year % prodiList.length];
+                    const namePick = names[year % names.length];
+                    const nim = `1210${p.code}${String(year).slice(-2)}0${(year % 9) + 1}`;
+                    
+                    const newRow = {
+                        identity_number: nim,
+                        name: `${namePick}`,
+                        birth_date: `${year - 22}-06-15`,
+                        graduation_year: String(year),
+                        faculty: p.fac,
+                        department: p.dep,
+                        gpa: (3.25 + ((year % 6) * 0.1)).toFixed(2),
+                        email: `alumni.${nim}@ummu.ac.id`,
+                        phone: `08124000${year}`,
+                        employment_status: statuses[year % statuses.length],
+                        company_name: companies[year % companies.length]
+                    };
+
+                    if (!allAlumni.some(a => a.identity_number === newRow.identity_number)) {
+                        allAlumni.push(newRow);
+                        added++;
+                    }
+                }
+
+                saveToStorage();
+                Swal.fire('Sinkronisasi Selesai!', `${added} data alumni lintas angkatan (2003–2025) berhasil ditarik.`, 'success');
+            }, 800);
         }
 
-        function openPublicFormModal() {
+        function syncNonInformatikaPDDikti() {
+            allAlumni = allAlumni.filter(a => !isExcludedInformatika(a.department, a.graduation_year));
+            document.getElementById('excludeInformatikaToggle').checked = true;
+            defaultInitialData.forEach(item => {
+                if (!allAlumni.some(a => a.identity_number === item.identity_number)) {
+                    allAlumni.push(item);
+                }
+            });
+            saveToStorage();
+            Swal.fire('Berhasil!', 'Data Informatika (2003-2025) telah dikecualikan dari daftar.', 'success');
+        }
+
+        function openAddModal() {
             document.getElementById('alumniForm').reset();
-            document.getElementById('modalTitle').innerText = 'Formulir Tracer Study Alumni (Publik)';
-            document.getElementById('modalSubtitle').innerText = 'Silakan isi data diri & status karir Anda saat ini sebagai alumni UMMU';
+            document.getElementById('modalTitle').innerText = 'Tambah Data Alumni (Admin)';
+            document.getElementById('modalSubtitle').innerText = 'Input data alumni baru ke dalam sistem direktori UMMU';
             document.getElementById('isEditMode').value = 'false';
             
             const idInput = document.getElementById('identityNumber');
@@ -572,7 +915,7 @@
 
         function editAlumni(nim) {
             const item = allAlumni.find(a => a.identity_number === nim);
-            if(!item) return;
+            if (!item) return;
 
             document.getElementById('modalTitle').innerText = 'Edit Data Alumni';
             document.getElementById('modalSubtitle').innerText = `Perbarui informasi untuk NIM ${nim}`;
@@ -600,7 +943,7 @@
 
         function duplicateAlumni(nim) {
             const item = allAlumni.find(a => a.identity_number === nim);
-            if(!item) return;
+            if (!item) return;
 
             document.getElementById('modalTitle').innerText = 'Duplikat Data Alumni';
             document.getElementById('modalSubtitle').innerText = 'Masukkan NIM baru untuk data hasil duplikasi ini';
@@ -626,7 +969,6 @@
             toggleModal('addModal');
         }
 
-        // Submit Form (Tambah, Input Publik, & Edit)
         document.getElementById('alumniForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const nim = document.getElementById('identityNumber').value.trim();
@@ -652,18 +994,53 @@
                 Swal.fire('Diperbarui!', `Data alumni NIM ${nim} berhasil diperbarui.`, 'success');
             } else {
                 if (allAlumni.some(a => a.identity_number === nim)) {
-                    Swal.fire('NIM Sudah Terdaftar', `NIM ${nim} sudah ada di dalam direktori.`, 'warning');
+                    Swal.fire('NIM Sudah Ada', `NIM ${nim} sudah terdaftar di sistem.`, 'warning');
                     return;
                 }
                 allAlumni.push(data);
-                Swal.fire('Terima Kasih!', 'Data alumni berhasil disimpan ke dalam Direktori Tracer Study UMMU.', 'success');
+                Swal.fire('Tersimpan!', 'Data alumni berhasil disimpan.', 'success');
             }
 
             saveToStorage();
             toggleModal('addModal');
         });
 
-        // Import Excel
+        function deleteAlumni(nim) {
+            Swal.fire({
+                title: 'Hapus Data Alumni?',
+                text: `Data dengan NIM ${nim} akan dihapus permanen.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Ya, Hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    allAlumni = allAlumni.filter(a => a.identity_number !== nim);
+                    saveToStorage();
+                    Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
+                }
+            });
+        }
+        
+        function clearData() {
+            Swal.fire({
+                title: 'Kosongkan Semua Data?',
+                text: "Seluruh data pada tabel akan direset!",
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                confirmButtonText: 'Ya, Kosongkan'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    allAlumni = [];
+                    saveToStorage();
+                    Swal.fire('Dikosongkan!', 'Tabel telah dikosongkan.', 'success');
+                }
+            });
+        }
+
+        // Import File Excel PDDikti
         document.getElementById('importExcel').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -720,13 +1097,12 @@
                     Swal.fire('Import Selesai', `${addedCount} data berhasil diproses.${skippedCount > 0 ? ` (${skippedCount} data Informatika dilewati)` : ''}`, 'success');
                     document.getElementById('importExcel').value = '';
                 } catch (err) {
-                    Swal.fire('Error', 'Gagal membaca format file Excel: ' + err.message, 'error');
+                    Swal.fire('Error', 'Gagal membaca file Excel: ' + err.message, 'error');
                 }
             };
             reader.readAsArrayBuffer(file);
         });
 
-        // Download Sample Template Excel
         function downloadSampleTemplate() {
             const ws_data = [
                 ['identity_number', 'name', 'birth_date', 'graduation_year', 'faculty', 'department', 'gpa', 'email', 'phone', 'employment_status', 'company_name'],
@@ -738,7 +1114,6 @@
             XLSX.writeFile(wb, "template_alumni_ummu.xlsx");
         }
 
-        // Export Excel sesuai data yang terfilter di tabel
         function exportToExcel() {
             if (filteredAlumni.length === 0) return Swal.fire('Kosong', 'Tidak ada data untuk diexport.', 'warning');
             
@@ -773,7 +1148,6 @@
             document.getElementById('filterStatus').value = 'all';
             document.getElementById('filterYear').value = '';
             document.getElementById('searchInput').value = '';
-            document.getElementById('excludeInformatikaToggle').checked = false;
             renderTable();
         }
 
