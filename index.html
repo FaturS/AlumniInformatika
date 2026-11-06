@@ -1,1 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Resmi Alumni UMMU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Untuk Export/Import Excel di sisi klien -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .modal { transition: opacity 0.25s ease; }
+        body.modal-active { overflow: hidden; }
+        .glass-nav { background: rgba(23, 37, 84, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
+    <!-- Top Navigation Bar -->
+    <nav class="glass-nav text-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center max-w-7xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-extrabold text-lg shadow-lg border border-blue-400/20">U</div>
+                <div>
+                    <span class="text-lg font-extrabold tracking-wide block leading-none">ALUMNI UMMU</span>
+                    <span class="text-[10px] text-blue-300 font-medium">Universitas Muhammadiyah Maluku Utara</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-blue-200 hidden sm:inline px-3 py-1 bg-blue-900 rounded-full border border-blue-800"><i class="fas fa-satellite-dish mr-1"></i> Mode GitHub Pages (Demo)</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Konten Utama Direktori -->
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        
+        <!-- Peringatan Demo -->
+        <div class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs sm:text-sm font-semibold flex items-start gap-3">
+            <i class="fas fa-info-circle text-lg mt-0.5 text-amber-500"></i>
+            <div>
+                <strong>Mode Standalone (Static Web):</strong> Aplikasi ini berjalan sepenuhnya di browser menggunakan <em>localStorage</em> (tanpa backend server). Segala penambahan data, sinkronisasi PDDikti simulasi, dan ekspor excel akan tersimpan sementara di perangkat Anda untuk keperluan demo/testing GitHub Pages.
+            </div>
+        </div>
+
+        <!-- Hero Banner / Statistik Section -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-2 sm:space-y-0 sm:space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-users"></i></div>
+                <div>
+                    <div class="text-2xl font-extrabold text-slate-800" id="statTotal">0</div>
+                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">Total Alumni</div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-2 sm:space-y-0 sm:space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-briefcase"></i></div>
+                <div>
+                    <div class="text-2xl font-extrabold text-slate-800" id="statBekerja">0</div>
+                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">Bekerja/Wirausaha</div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-2 sm:space-y-0 sm:space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-graduation-cap"></i></div>
+                <div>
+                    <div class="text-2xl font-extrabold text-slate-800" id="statStudi">0</div>
+                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">Studi Lanjut</div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-2 sm:space-y-0 sm:space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold shrink-0"><i class="fas fa-award"></i></div>
+                <div>
+                    <div class="text-2xl font-extrabold text-slate-800" id="statAvgGpa">0.00</div>
+                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">Rata-rata IPK</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Panel -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 flex flex-wrap gap-3 justify-between items-center border border-slate-200">
+            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5 flex-1 md:flex-none justify-center">
+                    <i class="fas fa-user-plus"></i> Tambah Alumni
+                </button>
+                <button onclick="syncFromPDDikti()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5 flex-1 md:flex-none justify-center">
+                    <i class="fas fa-sync"></i> Tarik Data PDDikti (Demo)
+                </button>
+                <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md cursor-pointer transition flex items-center gap-1.5 flex-1 md:flex-none justify-center">
+                    <i class="fas fa-file-import"></i> Import Excel
+                    <input type="file" id="importExcel" class="hidden" accept=".xlsx, .xls, .csv">
+                </label>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 w-full md:w-auto mt-2 md:mt-0">
+                <button onclick="clearData()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                    <i class="fas fa-trash-alt"></i> Reset Tabel
+                </button>
+                <button onclick="exportToExcel()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Panel -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 grid grid-cols-1 md:grid-cols-4 gap-4 border border-slate-200">
+            <div>
+                <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Status Karir</label>
+                <select id="filterStatus" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onchange="renderTable()">
+                    <option value="all">Semua Status</option>
+                    <option value="Bekerja">Bekerja</option>
+                    <option value="Wirausaha">Wirausaha</option>
+                    <option value="Studi Lanjut">Studi Lanjut</option>
+                    <option value="Belum Bekerja">Belum Bekerja</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Tahun Lulus</label>
+                <input type="text" id="filterYear" placeholder="Contoh: 2025" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onkeyup="renderTable()">
+            </div>
+            <div>
+                <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1.5">Pencarian Cepat</label>
+                <input type="text" id="searchInput" placeholder="Cari nama atau NIM..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500" onkeyup="renderTable()">
+            </div>
+            <div class="flex items-end">
+                <button onclick="resetFilters()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-1.5">
+                    <i class="fas fa-sync-alt"></i> Reset Filter
+                </button>
+            </div>
+        </div>
+
+        <!-- Directory Table Data -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-900 text-white text-[10px] uppercase tracking-wider font-extrabold">
+                        <tr>
+                            <th class="px-5 py-4 text-left">NIM</th>
+                            <th class="px-5 py-4 text-left">Nama Lengkap & Kontak</th>
+                            <th class="px-5 py-4 text-left">Fakultas / Program Studi</th>
+                            <th class="px-5 py-4 text-center">Thn Lulus</th>
+                            <th class="px-5 py-4 text-center">IPK</th>
+                            <th class="px-5 py-4 text-left">Status & Instansi</th>
+                            <th class="px-5 py-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alumniTableBody" class="bg-white divide-y divide-slate-100 text-xs">
+                        <!-- Data terisi secara dinamis JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 text-[11px] text-slate-600 flex justify-between font-bold">
+                <span>Data Terfilter: <strong id="totalFiltered" class="text-slate-900 text-xs">0</strong></span>
+                <span>Total Seluruh: <strong id="totalAll" class="text-slate-900 text-xs">0</strong></span>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-800 mt-10">
+        <div class="container mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-center md:text-left">
+            <p>&copy; 2026 Universitas Muhammadiyah Maluku Utara.</p>
+            <p>Portal Demo Statis (GitHub Pages). Sistem Tracer Study & Direktori Alumni.</p>
+        </div>
+    </footer>
+
+    <!-- Modal Form Tambah / Edit -->
+    <div id="addModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 p-4">
+        <div class="modal-overlay absolute w-full h-full bg-slate-900/60 backdrop-blur-sm" onclick="toggleModal('addModal')"></div>
+        <div class="modal-container bg-white w-full md:max-w-2xl mx-auto rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col max-h-full">
+            <div class="bg-slate-900 p-5 flex justify-between items-center text-white shrink-0">
+                <p id="modalTitle" class="text-lg font-extrabold tracking-tight">Tambah Data Alumni</p>
+                <div class="modal-close cursor-pointer text-slate-400 hover:text-white transition" onclick="toggleModal('addModal')">
+                    <i class="fas fa-times text-xl"></i>
+                </div>
+            </div>
+            
+            <div class="p-6 overflow-y-auto">
+                <form id="alumniForm" class="space-y-4">
+                    <input type="hidden" id="isEditMode" value="false">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">NIM *</label>
+                            <input type="text" id="identityNumber" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Nama Lengkap *</label>
+                            <input type="text" id="name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Tanggal Lahir *</label>
+                            <input type="date" id="birthDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Tahun Lulus *</label>
+                            <input type="text" id="graduationYear" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition" placeholder="Contoh: 2025">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Fakultas *</label>
+                            <input type="text" id="faculty" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition" placeholder="Contoh: Teknik">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Program Studi *</label>
+                            <input type="text" id="department" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition" placeholder="Contoh: Informatika">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">IPK *</label>
+                            <input type="text" id="gpa" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition" placeholder="Contoh: 3.75">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Email Aktif *</label>
+                            <input type="email" id="email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition" placeholder="alumni@ummu.ac.id">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">No. WhatsApp</label>
+                            <input type="text" id="phone" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Status Karir</label>
+                            <select id="employmentStatus" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition">
+                                <option value="Bekerja">Bekerja</option>
+                                <option value="Wirausaha">Wirausaha</option>
+                                <option value="Studi Lanjut">Studi Lanjut</option>
+                                <option value="Belum Bekerja">Belum Bekerja</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase tracking-wider mb-1.5">Instansi / Perusahaan / Kampus (Jika ada)</label>
+                            <input type="text" id="companyName" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition" placeholder="Contoh: PT Telkom / Universitas Brawijaya">
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-5 mt-6 border-t border-slate-100 gap-3">
+                        <button type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-3 rounded-xl font-bold text-xs transition" onclick="toggleModal('addModal')">Batal</button>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-md transition">Simpan Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT (LOGIKA LOKAL UNTUK GITHUB PAGES) -->
+    <script>
+        // Gunakan localStorage sebagai database browser
+        const STORAGE_KEY = 'ummu_alumni_data_v1';
+        let allAlumni = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let filteredAlumni = [];
+
+        function loadData() {
+            // Urutkan data: Tahun Lulus (desc), Nama (asc)
+            allAlumni.sort((a, b) => {
+                if (b.graduation_year !== a.graduation_year) return b.graduation_year - a.graduation_year;
+                return a.name.localeCompare(b.name);
+            });
+            updateStatistics();
+            renderTable();
+        }
+
+        function updateStatistics() {
+            const total = allAlumni.length;
+            const bekerja = allAlumni.filter(a => a.employment_status === 'Bekerja' || a.employment_status === 'Wirausaha').length;
+            const studi = allAlumni.filter(a => a.employment_status === 'Studi Lanjut').length;
+            
+            let totalGpa = 0;
+            allAlumni.forEach(a => totalGpa += parseFloat(a.gpa || 0));
+            const avgGpa = total > 0 ? (totalGpa / total).toFixed(2) : '0.00';
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statBekerja').innerText = bekerja;
+            document.getElementById('statStudi').innerText = studi;
+            document.getElementById('statAvgGpa').innerText = avgGpa;
+        }
+
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allAlumni));
+            loadData();
+        }
+
+        // Simulasi Sinkronisasi PDDikti (Demo Data)
+        function syncFromPDDikti() {
+            Swal.fire({
+                title: 'Menghubungkan ke PDDikti...',
+                text: 'Mengekstrak data simulasi untuk mode Demo.',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            setTimeout(() => {
+                const demoData = [
+                    { identity_number: "121055520124010", name: "EWIS JOLA A.WA BULA", birth_date: "2006-07-13", graduation_year: "2025", faculty: "Teknik", department: "Informatika", gpa: "3.75", email: "ewiswabula@gmail.com", phone: "082284238540", employment_status: "Bekerja", company_name: "PT Telkom Indonesia" },
+                    { identity_number: "121055520124011", name: "IRFAN IKBAL", birth_date: "2005-10-02", graduation_year: "2025", faculty: "Teknik", department: "Informatika", gpa: "3.60", email: "irfanikbalangga@gmail.com", phone: "085240648372", employment_status: "Wirausaha", company_name: "Startup Mandiri" },
+                    { identity_number: "121055520124019", name: "SELFI KALIADI", birth_date: "2006-06-19", graduation_year: "2025", faculty: "Teknik", department: "Informatika", gpa: "3.85", email: "selfikaliadi26@gmail.com", phone: "081230876769", employment_status: "Studi Lanjut", company_name: "Universitas Indonesia" }
+                ];
+                
+                // Gabungkan tanpa duplikat (Anti-duplikat berdasarkan NIM)
+                let added = 0;
+                demoData.forEach(newRow => {
+                    const existingIndex = allAlumni.findIndex(a => a.identity_number === newRow.identity_number);
+                    if(existingIndex === -1) {
+                        allAlumni.push(newRow);
+                        added++;
+                    } else {
+                        // Update jika ada (Opsional, untuk demo biarkan menimpa)
+                        allAlumni[existingIndex] = newRow;
+                    }
+                });
+
+                saveToStorage();
+                Swal.fire('Berhasil!', `Data demo PDDikti selesai diproses. (${added} data baru ditambahkan)`, 'success');
+            }, 1000);
+        }
+
+        function deleteAlumni(nim) {
+            Swal.fire({
+                title: 'Hapus Data?',
+                text: "Yakin menghapus data alumni ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48', // rose-600
+                cancelButtonColor: '#94a3b8', // slate-400
+                confirmButtonText: 'Ya, Hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    allAlumni = allAlumni.filter(a => a.identity_number !== nim);
+                    saveToStorage();
+                    Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
+                }
+            });
+        }
+        
+        function clearData() {
+            Swal.fire({
+                title: 'Reset Tabel?',
+                text: "Semua data alumni yang tersimpan di browser ini akan dihapus!",
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                confirmButtonText: 'Ya, Kosongkan'
+            }).then((result) => {
+                if(result.isConfirmed) {
+                    allAlumni = [];
+                    saveToStorage();
+                    Swal.fire('Dikosongkan!', 'Semua data telah dihapus.', 'success');
+                }
+            })
+        }
+
+        function renderTable() {
+            const statusFilter = document.getElementById('filterStatus').value;
+            const yearFilter = document.getElementById('filterYear').value.trim();
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            
+            const tbody = document.getElementById('alumniTableBody');
+            tbody.innerHTML = '';
+
+            filteredAlumni = allAlumni.filter(item => {
+                const matchStatus = statusFilter === 'all' || item.employment_status === statusFilter;
+                const matchYear = !yearFilter || item.graduation_year.includes(yearFilter);
+                const matchSearch = item.name.toLowerCase().includes(searchInput) || item.identity_number.includes(searchInput) || item.department.toLowerCase().includes(searchInput);
+                return matchStatus && matchYear && matchSearch;
+            });
+
+            document.getElementById('totalFiltered').innerText = filteredAlumni.length;
+            document.getElementById('totalAll').innerText = allAlumni.length;
+
+            if(filteredAlumni.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 font-semibold text-sm">Belum ada data alumni tersimpan.<br><span class="text-xs font-normal">Silakan tambah manual atau tekan Tarik Data PDDikti (Demo).</span></td></tr>`;
+                return;
+            }
+
+            filteredAlumni.forEach(item => {
+                // Konfigurasi Badge Warna
+                let badgeColor = '';
+                if(item.employment_status === 'Bekerja') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                else if(item.employment_status === 'Wirausaha') badgeColor = 'bg-amber-50 text-amber-700 border-amber-200';
+                else if(item.employment_status === 'Studi Lanjut') badgeColor = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                else badgeColor = 'bg-slate-50 text-slate-700 border-slate-200';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100 last:border-0";
+                tr.innerHTML = `
+                    <td class="px-5 py-4 font-mono font-bold text-slate-700 text-sm whitespace-nowrap">${item.identity_number}</td>
+                    <td class="px-5 py-4">
+                        <div class="font-extrabold text-slate-900 text-sm mb-0.5">${item.name}</div>
+                        <div class="text-[10px] text-slate-500 flex items-center gap-2">
+                            <span><i class="fas fa-envelope mr-1 text-slate-400"></i>${item.email || '-'}</span>
+                            <span><i class="fas fa-phone mr-1 text-slate-400"></i>${item.phone || '-'}</span>
+                        </div>
+                    </td>
+                    <td class="px-5 py-4 text-slate-700">
+                        <span class="font-bold block mb-0.5">${item.department}</span>
+                        <span class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">FAK. ${item.faculty}</span>
+                    </td>
+                    <td class="px-5 py-4 text-center font-extrabold text-slate-700">${item.graduation_year}</td>
+                    <td class="px-5 py-4 text-center font-extrabold text-blue-600">${item.gpa}</td>
+                    <td class="px-5 py-4">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${badgeColor} inline-block mb-1 shadow-sm">
+                            ${item.employment_status}
+                        </span>
+                        <div class="text-[10px] text-slate-500 font-semibold truncate max-w-[150px]" title="${item.company_name}"><i class="fas fa-building mr-1"></i>${item.company_name || '-'}</div>
+                    </td>
+                    <td class="px-5 py-4 text-center whitespace-nowrap">
+                        <button onclick="editAlumni('${item.identity_number}')" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg mr-1 transition shadow-sm" title="Edit Data"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteAlumni('${item.identity_number}')" class="text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg transition shadow-sm" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openAddModal() {
+            document.getElementById('alumniForm').reset();
+            document.getElementById('modalTitle').innerText = 'Tambah Data Alumni';
+            document.getElementById('isEditMode').value = 'false';
+            
+            const idInput = document.getElementById('identityNumber');
+            idInput.readOnly = false;
+            idInput.classList.remove('bg-slate-100', 'cursor-not-allowed', 'text-slate-500');
+            idInput.classList.add('bg-slate-50');
+            
+            toggleModal('addModal');
+        }
+
+        function editAlumni(nim) {
+            const item = allAlumni.find(a => a.identity_number === nim);
+            if(!item) return;
+
+            document.getElementById('modalTitle').innerText = 'Edit Data Alumni';
+            document.getElementById('isEditMode').value = 'true';
+            
+            const idInput = document.getElementById('identityNumber');
+            idInput.value = item.identity_number;
+            idInput.readOnly = true; // NIM tidak boleh diubah saat edit
+            idInput.classList.remove('bg-slate-50');
+            idInput.classList.add('bg-slate-100', 'cursor-not-allowed', 'text-slate-500');
+
+            document.getElementById('name').value = item.name;
+            document.getElementById('birthDate').value = item.birth_date;
+            document.getElementById('graduationYear').value = item.graduation_year;
+            document.getElementById('faculty').value = item.faculty;
+            document.getElementById('department').value = item.department;
+            document.getElementById('gpa').value = item.gpa;
+            document.getElementById('email').value = item.email;
+            document.getElementById('phone').value = item.phone || '';
+            document.getElementById('employmentStatus').value = item.employment_status;
+            document.getElementById('companyName').value = item.company_name || '';
+
+            toggleModal('addModal');
+        }
+
+        // Handle Submit Form Manual (Tambah & Edit)
+        document.getElementById('alumniForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nim = document.getElementById('identityNumber').value.trim();
+            const isEditMode = document.getElementById('isEditMode').value === 'true';
+
+            const data = {
+                identity_number: nim,
+                name: document.getElementById('name').value,
+                birth_date: document.getElementById('birthDate').value,
+                graduation_year: document.getElementById('graduationYear').value,
+                faculty: document.getElementById('faculty').value,
+                department: document.getElementById('department').value,
+                gpa: document.getElementById('gpa').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                employment_status: document.getElementById('employmentStatus').value,
+                company_name: document.getElementById('companyName').value
+            };
+
+            if (isEditMode) {
+                // Mode Update
+                const index = allAlumni.findIndex(a => a.identity_number === nim);
+                if (index !== -1) allAlumni[index] = data;
+                Swal.fire('Diperbarui!', `Data NIM ${nim} berhasil diupdate.`, 'success');
+            } else {
+                // Mode Tambah Baru: Cek duplikasi
+                if (allAlumni.some(a => a.identity_number === nim)) {
+                    Swal.fire('Error', `Gagal menyimpan! NIM ${nim} sudah ada di tabel.`, 'error');
+                    return;
+                }
+                allAlumni.push(data);
+                Swal.fire('Disimpan!', `Data alumni baru berhasil ditambahkan.`, 'success');
+            }
+
+            saveToStorage();
+            toggleModal('addModal');
+        });
+
+        // Proses Import Excel di Sisi Klien (Tanpa Server)
+        document.getElementById('importExcel').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheetName = workbook.SheetNames[0];
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+                    let addedCount = 0;
+                    let duplicateCount = 0;
+
+                    rows.forEach(r => {
+                        // Pastikan ada NIM dan Nama
+                        if (r.identity_number && r.name) {
+                            const nim = String(r.identity_number).trim();
+                            const exists = allAlumni.findIndex(a => a.identity_number === nim);
+
+                            const newRow = {
+                                identity_number: nim,
+                                name: r.name,
+                                birth_date: r.birth_date || '2000-01-01',
+                                graduation_year: String(r.graduation_year || '2025'),
+                                faculty: r.faculty || '-',
+                                department: r.department || '-',
+                                gpa: String(r.gpa || '3.50'),
+                                email: r.email || 'alumni@ummu.ac.id',
+                                phone: r.phone || '',
+                                employment_status: r.employment_status || 'Bekerja',
+                                company_name: r.company_name || '-'
+                            };
+
+                            if (exists === -1) {
+                                allAlumni.push(newRow);
+                                addedCount++;
+                            } else {
+                                // Timpa data jika sudah ada (opsional)
+                                allAlumni[exists] = newRow;
+                                duplicateCount++;
+                            }
+                        }
+                    });
+
+                    saveToStorage();
+                    Swal.fire('Import Selesai', `${addedCount} data baru ditambahkan, ${duplicateCount} data diupdate.`, 'success');
+                    document.getElementById('importExcel').value = ''; // Reset input
+                } catch (err) {
+                    Swal.fire('Error', 'Gagal membaca format file Excel: ' + err.message, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Export Excel di sisi Klien
+        function exportToExcel() {
+            if (filteredAlumni.length === 0) return Swal.fire('Kosong', 'Tidak ada data untuk diexport. Pastikan tabel tidak kosong.', 'warning');
+            
+            // Format ulang data agar rapi saat dicetak ke excel
+            const dataToExport = filteredAlumni.map(item => ({
+                "NIM": item.identity_number,
+                "Nama Lengkap": item.name,
+                "Fakultas": item.faculty,
+                "Program Studi": item.department,
+                "Tahun Lulus": item.graduation_year,
+                "IPK": item.gpa,
+                "Status Karir": item.employment_status,
+                "Instansi/Perusahaan": item.company_name,
+                "No. WhatsApp": item.phone,
+                "Email": item.email,
+                "Tgl Lahir": item.birth_date
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Direktori Alumni");
+            
+            const filename = `Alumni_UMMU_GitHub_Export_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, filename);
+        }
+
+        // Toggles & Reset
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('opacity-0');
+            document.getElementById(id).classList.toggle('pointer-events-none');
+            document.body.classList.toggle('modal-active');
+        }
+
+        function resetFilters() {
+            document.getElementById('filterStatus').value = 'all';
+            document.getElementById('filterYear').value = '';
+            document.getElementById('searchInput').value = '';
+            renderTable();
+        }
+
+        // Inisialisasi awal saat load
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
